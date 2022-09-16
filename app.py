@@ -96,7 +96,7 @@ st.sidebar.title("Stady")
 
 
 st.sidebar.selectbox(
-    "問題の選択・表示方法を選択してください。",
+    "問題の読み込み・表示方法を選択してください。",
     options=(options if "title" in st.session_state else options[:3]),
     key="opt",
     on_change=(give if "title" in st.session_state else lambda x: 0),
@@ -105,7 +105,7 @@ st.sidebar.selectbox(
 st.sidebar.caption("選択を変更すると編集中のデータは失われます。")
 num = options.index(st.session_state.opt)
 if 0 <= num <= 2:
-    st.sidebar.subheader("問題の選択")
+    st.sidebar.subheader("問題の読み込み")
 if num == 0:
     st.sidebar.text_input(
         "以下の形式のGoogleスプレッドシートを「リンクを知っている全員」が「閲覧者」になるように共有し、リンクを入力してください。",
@@ -115,12 +115,12 @@ if num == 0:
     )
 elif num == 1:
     st.sidebar.file_uploader(
-        "以下の形式のcsvファイルを選択してください。", key="csv_file", type="csv", on_change=change_file
+        "以下の形式のcsvファイルをアップロードしてください。", key="csv_file", type="csv", on_change=change_file
     )
 elif num == 2:
     with st.sidebar.form("csv_text_form"):
         st.text_input("タイトル", key="csv_text_title")
-        st.text_area("以下の形式のcsvファイルを入力してください。", key="csv_text")
+        st.text_area("以下の形式で入力してください。", key="csv_text")
         submitted = st.form_submit_button("送信", on_click=change_text)
 elif num == 3:
     data = [[st.session_state["common_question"]], *st.session_state["questions"]]
@@ -145,3 +145,5 @@ if 0 <= num <= 2:
     st.sidebar.subheader("対応ファイル形式")
     st.sidebar.table(data=table)
     st.sidebar.markdown("各問題の問題文にはMarkdownを使えます。")
+if 'title' not in st.session_state:
+    st.write('サイドバーから問題の読み込みをしてください。')
