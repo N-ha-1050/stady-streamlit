@@ -102,6 +102,7 @@ st.sidebar.selectbox(
     on_change=(give if "title" in st.session_state else lambda x: 0),
     args=(False,),
 )
+st.sidebar.caption("選択を変更すると編集中のデータは失われます。")
 num = options.index(st.session_state.opt)
 if 0 <= num <= 2:
     st.sidebar.subheader("問題の選択")
@@ -122,16 +123,18 @@ elif num == 2:
         st.text_area("以下の形式のcsvファイルを入力してください。", key="csv_text")
         submitted = st.form_submit_button("送信", on_click=change_text)
 elif num == 3:
-    data = [[st.session_state["common_question"], ""], *st.session_state["questions"]]
+    data = [[st.session_state["common_question"]], *st.session_state["questions"]]
     st.sidebar.download_button(
         "csv形式でダウンロード",
         data="\n".join([",".join(value) for value in data]),
-        file_name=st.session_state["title"],
+        file_name=f'{st.session_state["title"]}.csv',
         mime="text/csv",
     )
     st.sidebar.caption("アプリで整形後のデータです。")
     st.sidebar.write(f'タイトル：{st.session_state["title"]}')
-    st.sidebar.table(data=data)
+    st.sidebar.table(
+        data=[[st.session_state["common_question"], ""], *st.session_state["questions"]]
+    )
     st.sidebar.button(
         "テキストエリアに反映",
         on_click=click_button,
@@ -141,4 +144,4 @@ elif num == 3:
 if 0 <= num <= 2:
     st.sidebar.subheader("対応ファイル形式")
     st.sidebar.table(data=table)
-    st.sidebar.markdown("各問題の問題文にはMarkdownと$$\KaTeX$$を使えます。")
+    st.sidebar.markdown("各問題の問題文にはMarkdownを使えます。")
