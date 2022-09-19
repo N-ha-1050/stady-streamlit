@@ -73,10 +73,10 @@ def give(next=True):
 
     st.title(st.session_state["title"])
     st.markdown(st.session_state["q"])
-    st.text_input(st.session_state["common_question"], key="answer", on_change=check_)
+    st.text_input(st.session_state["common_question"], key="answer", on_change=check)
 
 
-def check_():
+def check():
     if st.session_state.answer == st.session_state["a"]:
         st.success("正解")
     else:
@@ -93,6 +93,11 @@ def click_button(data):
 
 
 st.sidebar.title("Stady")
+
+params = st.experimental_get_query_params()
+if "sheet_url" in params.keys() and "title" not in st.session_state:
+    st.session_state["sheet_url"] = params["sheet_url"][0]
+    change_url()
 
 
 st.sidebar.selectbox(
@@ -145,5 +150,5 @@ if 0 <= num <= 2:
     st.sidebar.subheader("対応ファイル形式")
     st.sidebar.table(data=table)
     st.sidebar.markdown("各問題の問題文にはMarkdownを使えます。")
-if 'title' not in st.session_state:
-    st.write('サイドバーから問題の読み込みをしてください。')
+if "title" not in st.session_state:
+    st.write("サイドバーから問題の読み込みをしてください。")
