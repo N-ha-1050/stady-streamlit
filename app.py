@@ -72,7 +72,7 @@ def give(next=True):
         st.session_state["a"] = a
 
     st.title(st.session_state["title"])
-    if 'msg' in st.session_state and st.session_state['msg']:
+    if "msg" in st.session_state and st.session_state["msg"]:
         st.info(st.session_state["msg"])
     st.markdown(st.session_state["q"])
     st.text_input(st.session_state["common_question"], key="answer", on_change=check)
@@ -80,9 +80,11 @@ def give(next=True):
 
 def check():
     if st.session_state.answer == st.session_state["a"]:
-        st.session_state['msg'] = "正解"
+        st.session_state["msg"] = "正解"
     else:
-        st.session_state['msg'] = f'不正解 正解: {st.session_state["a"]} 誤答: {st.session_state.answer}'
+        st.session_state[
+            "msg"
+        ] = f'不正解 正解: {st.session_state["a"]} 誤答: {st.session_state.answer}'
     st.session_state.answer = ""
     give()
 
