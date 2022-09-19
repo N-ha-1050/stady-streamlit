@@ -80,7 +80,7 @@ def check():
     if st.session_state.answer == st.session_state["a"]:
         st.success("正解")
     else:
-        st.warning(f'不正解 正答: {st.session_state["a"]} 誤答: {st.session_state.answer}')
+        st.warning(f'不正解 正解: {st.session_state["a"]} 誤答: {st.session_state.answer}')
     st.session_state.answer = ""
     give()
 
