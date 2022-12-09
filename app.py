@@ -35,7 +35,7 @@ def change_id(is_record=False):
     if not questions:
         return 0
     if is_record:
-        st.info('この問題では解答データを記録します。')
+        st.info("この問題では解答データを記録します。データ書き込みのため速度が低下する場合があります。停止するには画面下のボタンを押してください。")
     st.session_state["common_question"] = common_question
     st.session_state["questions"] = questions
     st.session_state["title"] = title
@@ -80,6 +80,11 @@ def change_text():
     give()
 
 
+def stop_record():
+    st.session_state["is_record"] = False
+    give()
+
+
 def give(next=True):
     if next or "q" not in st.session_state or "a" not in st.session_state:
         q, a = random.choice(st.session_state["questions"])
@@ -91,6 +96,8 @@ def give(next=True):
         st.info(st.session_state["msg"])
     st.markdown(st.session_state["q"])
     st.text_input(st.session_state["common_question"], key="answer", on_change=check)
+    if st.session_state.is_record:
+        st.button("記録を停止", on_click=stop_record)
 
 
 def check():
@@ -101,16 +108,21 @@ def check():
             "msg"
         ] = f'不正解 正解: {st.session_state["a"]} 誤答: {st.session_state.answer}'
     if st.session_state["is_record"]:
-        # try:
-        is_write, msg = write_record(st.session_state.sheet_id, st.session_state.q, st.session_state.a, st.session_state.answer)
-        # except:
-            # st.error('記録に失敗しました。')
-        # else:
-        if msg:
-            if is_write:
-                st.info(msg)
-            else:
-                st.error(msg)
+        try:
+            is_write, msg = write_record(
+                st.session_state.sheet_id,
+                st.session_state.q,
+                st.session_state.a,
+                st.session_state.answer,
+            )
+        except:
+            st.info("記録に失敗しました。")
+        else:
+            if msg:
+                if is_write:
+                    st.info(msg)
+                else:
+                    st.error(msg)
     st.session_state.answer = ""
     # st.button('次へ', on_click=give)
     give()
