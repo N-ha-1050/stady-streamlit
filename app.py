@@ -1,5 +1,5 @@
 import streamlit as st
-from main import load_url, load_csv_file, load_csv_text
+from main import load_id, load_csv_file, load_csv_text, get_id_from_url, write_record
 import random
 
 options = ["Googleスプレッドシートを共有", "csvファイルをアップロード", "csv形式で入力", "現在のデータを表示・ダウンロード"]
@@ -16,16 +16,31 @@ table = [
 
 def change_url():
     try:
-        title, common_question, questions = load_url(st.session_state.sheet_url)
+        id = get_id_from_url(st.session_state.sheet_url)
     except:
         st.sidebar.error("接続に失敗しました。")
         return 0
+    st.session_state["sheet_id"] = id
+    change_id()
+
+
+def change_id(is_record=False):
+    try:
+        title, common_question, questions, is_record = load_id(
+            st.session_state.sheet_id, is_record
+        )
+    except:
+        st.sidebar.error(f"接続に失敗しました。")
+        return 0
     if not questions:
         return 0
+    if is_record:
+        st.info('この問題では解答データを記録します。')
     st.session_state["common_question"] = common_question
     st.session_state["questions"] = questions
     st.session_state["title"] = title
     st.session_state["opt"] = options[0]
+    st.session_state["is_record"] = is_record
     give()
 
 
@@ -85,7 +100,19 @@ def check():
         st.session_state[
             "msg"
         ] = f'不正解 正解: {st.session_state["a"]} 誤答: {st.session_state.answer}'
+    if st.session_state["is_record"]:
+        # try:
+        is_write, msg = write_record(st.session_state.sheet_id, st.session_state.q, st.session_state.a, st.session_state.answer)
+        # except:
+            # st.error('記録に失敗しました。')
+        # else:
+        if msg:
+            if is_write:
+                st.info(msg)
+            else:
+                st.error(msg)
     st.session_state.answer = ""
+    # st.button('次へ', on_click=give)
     give()
 
 
@@ -102,6 +129,12 @@ params = st.experimental_get_query_params()
 if "sheet_url" in params.keys() and "title" not in st.session_state:
     st.session_state["sheet_url"] = params["sheet_url"][0]
     change_url()
+if "sheet_id" in params.keys() and "title" not in st.session_state:
+    st.session_state["sheet_id"] = params["sheet_id"][0]
+    change_id()
+if "id" in params.keys() and "title" not in st.session_state:
+    st.session_state["sheet_id"] = params["id"][0]
+    change_id(is_record=True)
 
 
 st.sidebar.selectbox(
