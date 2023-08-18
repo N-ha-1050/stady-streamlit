@@ -33,7 +33,6 @@ record_sh = gc.open_by_key(record_sheet_id)
 
 
 def get_id_from_url(sheet_url=""):
-
     # Googleアカウント認証
     # gc = gspread.service_account_from_dict(credentials)
 
@@ -47,10 +46,6 @@ def get_id_from_url(sheet_url=""):
 
 
 def load_id(sheet_id="", is_record=False):
-
-    # Googleアカウント認証
-    # gc = gspread.service_account_from_dict(credentials)
-
     # ワークシートを開く
     sh = gc.open_by_key(sheet_id)
     worksheet = sh.sheet1
@@ -96,7 +91,6 @@ def load_csv_text(csv_text="", csv_title=""):
 
 
 def write_record(sheet_id, q, a, answer):
-
     # rand_rate 分の一の割合で記録
     if random.randrange(rand_rate):
         return False, ""
@@ -117,11 +111,9 @@ def write_record(sheet_id, q, a, answer):
     if sheet_id in worksheet_titles:
         worksheet = record_sh.worksheet(sheet_id)
         if worksheet.cell(1, 1).value != title:
-            # if worksheet.get('A1') != title:
             worksheet.update_cell(1, 1, title)
             msg = "問題情報を更新しました。"
         if worksheet.cell(1, 2).value != common_question:
-            # if worksheet.get('B1') != common_question:
             worksheet.update_cell(1, 2, common_question)
             msg = "問題情報を更新しました。"
         _, _, *sheet_questions = worksheet.get_all_values()

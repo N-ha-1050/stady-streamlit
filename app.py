@@ -14,6 +14,14 @@ table = [
 ]
 
 
+def init_session_state(common_question, questions, title, opt, is_record=False):
+    st.session_state["common_question"] = common_question
+    st.session_state["questions"] = questions
+    st.session_state["title"] = title
+    st.session_state["opt"] = opt
+    st.session_state["is_record"] = is_record
+
+
 def change_url():
     try:
         id = get_id_from_url(st.session_state.sheet_url)
@@ -36,11 +44,7 @@ def change_id(is_record=False):
         return 0
     if is_record:
         st.info("この問題では解答データを記録します。データ書き込みのため速度が低下する場合があります。停止するには画面下のボタンを押してください。")
-    st.session_state["common_question"] = common_question
-    st.session_state["questions"] = questions
-    st.session_state["title"] = title
-    st.session_state["opt"] = options[0]
-    st.session_state["is_record"] = is_record
+    init_session_state(common_question, questions, title, options[0], is_record)
     give()
 
 
@@ -54,10 +58,7 @@ def change_file():
         return 0
     if not questions:
         return 0
-    st.session_state["common_question"] = common_question
-    st.session_state["questions"] = questions
-    st.session_state["title"] = title
-    st.session_state["opt"] = options[1]
+    init_session_state(common_question, questions, title, options[1])
     give()
 
 
@@ -73,10 +74,7 @@ def change_text():
         return 0
     if not questions:
         return 0
-    st.session_state["common_question"] = common_question
-    st.session_state["questions"] = questions
-    st.session_state["title"] = title
-    st.session_state["opt"] = options[2]
+    init_session_state(common_question, questions, title, options[2])
     give()
 
 
@@ -124,7 +122,6 @@ def check():
                 else:
                     st.error(msg)
     st.session_state.answer = ""
-    # st.button('次へ', on_click=give)
     give()
 
 
